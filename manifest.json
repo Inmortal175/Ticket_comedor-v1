@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Ticket Printer-comedor UNSCH",
+  "version": "1.2",
+  "author": "Figueroa Perez, Franklin",
+  "description": "Imprime el contenido de popups y modales y extrae carrera",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://intranet.unsch.edu.pe/alumno/tickets-comedor*",
+    "https://intranet.unsch.edu.pe/alumno/notas*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://intranet.unsch.edu.pe/alumno/tickets-comedor*",
+        "https://intranet.unsch.edu.pe/alumno/notas*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Ticket Printer-comedor UNSCH"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "libs/html2canvas.min.js",
+        "scripts/ticketActions.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "favicon.png"
+  }
+}
