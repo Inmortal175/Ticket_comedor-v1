@@ -21,12 +21,7 @@ async function checkCarrera() {
     });
   });
 
-  const userNameElement = document.querySelector('.m-topbar__name');
-  const userName = userNameElement ? userNameElement.textContent.trim() : 'USUARIO NO IDENTIFICADO';
-
-  // console.log(userName);
-
-  if (datos && datos.estudiante === userName) {
+  if (datos) {
     // console.log('Carrera ya almacenada:', datos);
     return;
   }
@@ -52,31 +47,45 @@ function esUrlValida(url) {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'carrera_obtenida') {
-    // Guardar carrera y estudiante
-    chrome.storage.local.set({ carreraUns: request.carrera, estudiante: request.estudiante, codigo: request.codigo }, () => {
-      // console.log('Datos guardados en storage desde background');
-      sendResponse({ result: 'Datos guardados' });
+    // console.log("Mensaje recibido: carrera_obtenida, guardando datos...");
+    chrome.storage.local.set(
+      { carreraUns: request.carrera, estudiante: request.estudiante, codigo: request.codigo },
+      () => {
+        // console.log("Datos guardados en storage.");
 
-      if (tabIdNotas !== null) {
-        chrome.tabs.remove(tabIdNotas, () => {
-          tabIdNotas = null;
-        });
+        if (tabIdNotas !== null) {
+          // console.log("Intentando cerrar pestaña con tabIdNotas:", tabIdNotas);
+          chrome.tabs.remove(tabIdNotas, () => {
+            if (chrome.runtime.lastError) {
+              console.error("Error cerrando pestaña:", chrome.runtime.lastError.message);
+            } else {
+              // console.log("Pestaña notas cerrada correctamente.");
+              tabIdNotas = null;
+            }
+            sendResponse({ result: 'Datos guardados y pestaña cerrada' });
+          });
+        } else {
+          // console.log("tabIdNotas es null, no se cerrará pestaña.");
+          sendResponse({ result: 'Datos guardados, sin pestaña para cerrar' });
+        }
       }
-    });
+    );
+
     return true; // Mantener canal asíncrono abierto para sendResponse
   } else if (request.action === 'abrir_pagina_notas') {
-    chrome.tabs.query({ url: 'https://intranet.unsch.edu.pe/alumno/notas*' }, (tabs) => {
-      if (tabs.length === 0) {
-        chrome.tabs.create({ url: 'https://intranet.unsch.edu.pe/alumno/notas', active: false });
-        // console.log('Pestaña de notas abierta desde background');
-      } else {
-        // console.log('Pestaña de notas ya existe, activando...');
-        chrome.tabs.update(tabs[0].id, { active: true });
-      }
-    });
-  }else{
-    // console.log("here!!")
-    checkCarrera()
+    console.log("Mensaje recibido: abrir_pagina_notas");
+    if (tabIdNotas !== null) {
+      chrome.tabs.reload(tabIdNotas, {}, () => {
+        if (chrome.runtime.lastError) {
+          console.error('Error recargando pestaña:', chrome.runtime.lastError.message);
+        } else {
+          console.log('Pestaña recargada sin activar');
+        }
+      });
+    }
+  } else {
+    console.log("Mensaje recibido desconocido, ejecutando checkCarrera");
+    checkCarrera();
   }
 });
 

@@ -21,13 +21,27 @@ document.getElementById('print-btn').addEventListener('click', () => {
     parentElem.appendChild(devDiv);
   }
     window.print();
+  // Eliminar el div dev para dejar limpio el DOM
+  if (devDiv.parentNode) {
+    devDiv.parentNode.removeChild(devDiv);
+  }
 });
 
 document.getElementById('download-btn').addEventListener('click', () => {
   const ticket = document.querySelector('.ticket');
   if (!ticket) return alert('No se encontró el ticket.');
-  ticket.style.padding = '15px 25px';
-  ticket.style.width = '71mm';
+  const wrapper = document.getElementById("ticket-wrapper")
+  if (!wrapper) return alert("Ocurrión un error en la extensión del comedor")
+  
+  if (ticket.classList.contains('clasico')){
+    ticket.style.padding = '20px 25px';
+    ticket.style.width = '71mm';
+    wrapper.style.width = '71mm'
+  }else{
+    ticket.style.padding = '20px 11px';
+    ticket.style.width = '71mm';
+  }
+
 
   const parentElem = ticket.children[5].children[1];
   const referenceNode = parentElem.children;
@@ -64,8 +78,11 @@ document.getElementById('download-btn').addEventListener('click', () => {
   borderBottom.className = 'border-bottom-temp';
 
   // Insertar el borde superior al inicio y el borde inferior al final del ticket
-  ticket.insertBefore(borderTop, ticket.firstChild);
-  ticket.appendChild(borderBottom);
+  if (ticket.classList.contains('clasico')) {
+    ticket.insertBefore(borderTop, ticket.firstChild);
+    ticket.appendChild(borderBottom);
+  } 
+  
 
   // Esperar a que ambas imágenes carguen antes de capturar con html2canvas
   let loadedCount = 0;
@@ -73,7 +90,7 @@ document.getElementById('download-btn').addEventListener('click', () => {
     loadedCount++;
     if (loadedCount === 2) {
       // Ambas imágenes cargadas, capturar
-      html2canvas(ticket, { scale: 2, backgroundColor: '#fff' })
+      html2canvas(wrapper, { scale: 2, backgroundColor: '#fff' })
         .then(canvas => {
           const link = document.createElement('a');
           link.download = `ticket_unsch_${new Date().toISOString().replace(/[:.]/g, '-')}.png`;
@@ -96,12 +113,85 @@ document.getElementById('download-btn').addEventListener('click', () => {
             borderBottom.parentNode.removeChild(borderBottom);
           }
 
-          ticket.style.padding = '0';
-          ticket.style.width = '58mm';
+          //  eliminamos lo estilos inline
+          ticket.removeAttribute('style');
+          wrapper.removeAttribute('style');
+
         });
     }
   }
 
   borderTop.onload = onImageLoad;
   borderBottom.onload = onImageLoad;
+});
+
+// para el boton de eleccion de estilo
+document.getElementById('toggle-style-btn').addEventListener('click', () => {
+  const ticket = document.getElementById('ticket-container');
+  const label = document.getElementById('current-style-label');
+  const btn = document.getElementById('toggle-style-btn');
+  const body = document.body; // obtener elemento body
+
+  if (ticket.classList.contains('clasico')) {
+    ticket.classList.remove('clasico');
+    ticket.classList.add('moderno');
+    label.textContent = 'Estilo actual: Moderno';
+    btn.textContent = 'Modo clásico';
+    body.classList.add('moderno'); // añadir clase moderno al body
+  } else {
+    ticket.classList.remove('moderno');
+    ticket.classList.add('clasico');
+    label.textContent = 'Estilo actual: Clásico';
+    btn.textContent = 'Modo moderno';
+    body.classList.remove('moderno'); // remover clase moderno del body
+  }
+});
+
+
+
+
+document.getElementById('autor-btn').addEventListener('click', () => {
+  const modal = document.getElementById('modal-autor');
+  const openBtn = document.getElementById('autor-btn'); // botón abrir
+  const closeBtn = modal.querySelector('.close-btn');
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    openBtn.focus();
+  }
+
+  // Abrir modal
+  modal.classList.add('active');
+  modal.setAttribute('tabindex', '-1');
+  modal.focus();
+  document.body.style.overflow = 'hidden';
+
+  // Listener para cerrar modal con botón cerrar
+  closeBtn.addEventListener('click', closeModal, { once: true });
+
+  // Listener para cerrar modal haciendo clic fuera del contenido
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  }, { once: true });
+
+  // Listener para cerrar modal con tecla Escape
+  document.addEventListener('keydown', function escClose(e) {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+      document.removeEventListener('keydown', escClose);
+    }
+  });
+});
+
+
+document.addEventListener('contextmenu', event => event.preventDefault());
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'F12' || 
+     (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'C' || event.key === 'J'))) {
+    event.preventDefault();
+  }
 });

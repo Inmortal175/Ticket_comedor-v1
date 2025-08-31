@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Ticket Printer-comedor UNSCH",
+  "name": "Getter Ticket comedor UNSCH",
   "version": "1.2",
   "author": "Figueroa Perez, Franklin",
-  "description": "Imprime el contenido de popups y modales y extrae carrera",
+  "description": "Descargar o imprimir Ticket del comedor UNSCH, para acceso por QR.",
   "permissions": [
     "activeTab",
     "scripting",
@@ -23,23 +23,31 @@
         "https://intranet.unsch.edu.pe/alumno/tickets-comedor*",
         "https://intranet.unsch.edu.pe/alumno/notas*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "libs/jsqr-1.0.3-min.js",
+        "libs/qr-code-styling.min.js",
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ],
   "action": {
-    "default_title": "Ticket Printer-comedor UNSCH"
+    "default_title": "Ticket Printer-comedor UNSCH",
+    "default_icon": "imgs/favicon16.png"
   },
   "web_accessible_resources": [
     {
       "resources": [
         "libs/html2canvas.min.js",
-        "scripts/ticketActions.js"
+        "scripts/ticketActions.js",
+        "libs/jsqr-1.0.3-min.js",
+        "libs/qr-code-styling.min.js"
       ],
       "matches": ["<all_urls>"]
     }
   ],
   "icons": {
-    "16": "favicon.png"
+    "16": "imgs/favicon16.png",
+    "48": "imgs/favicon48.png"
   }
 }
