@@ -1,3 +1,4 @@
+//background.js
 let tabIdNotas = null;
 let tabIdTickets = null;
 

@@ -1,3 +1,5 @@
+// libs\jsqr-1.0.3-min.js
+
 /**
  * Minified by jsDelivr using Terser v5.37.0.
  * Original file: /npm/jsqr@1.4.0/dist/jsQR.js
