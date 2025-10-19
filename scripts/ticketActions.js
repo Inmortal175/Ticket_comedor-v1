@@ -197,4 +197,113 @@ document.addEventListener('keydown', event => {
   }
 });
 
-document.addEventListener()
+
+
+
+// ticketActions.js - Funcionalidad para compartir, imprimir y descargar tickets
+
+(function() {
+  'use strict';
+
+  // Convertir el ticket a imagen y compartir
+  async function shareTicketToWhatsApp() {
+    try {
+      const ticketElement = document.getElementById('ticket-wrapper');
+      if (!ticketElement) {
+        alert('No se encontró el ticket para compartir');
+        return;
+      }
+
+      // Mostrar indicador de carga
+      const shareBtn = document.getElementById('share-whatsapp-btn');
+      const originalText = shareBtn.textContent;
+      shareBtn.textContent = 'Generando...';
+      shareBtn.disabled = true;
+
+      // Convertir el ticket a canvas usando html2canvas
+      const canvas = await html2canvas(ticketElement, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true
+      });
+
+      // Convertir canvas a blob
+      const blob = await new Promise(resolve => {
+        canvas.toBlob(resolve, 'image/png', 1.0);
+      });
+
+      // Crear un archivo con el blob
+      const fileName = `ticket-comedor-${new Date().getTime()}.png`;
+      const file = new File([blob], fileName, { type: 'image/png' });
+
+      // Verificar si podemos compartir este archivo
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Ticket Comedor UNSCH',
+          text: 'Mi ticket del comedor universitario'
+        });
+        console.log('Imagen compartida exitosamente');
+      } else {
+        // Fallback: descargar la imagen si no se puede compartir
+        downloadImage(canvas, fileName);
+        alert('Tu dispositivo no soporta compartir archivos. La imagen se descargará.');
+      }
+
+      // Restaurar botón
+      shareBtn.textContent = originalText;
+      shareBtn.disabled = false;
+
+    } catch (error) {
+      console.error('Error al compartir:', error);
+      
+      // Restaurar botón en caso de error
+      const shareBtn = document.getElementById('share-whatsapp-btn');
+      if (shareBtn) {
+        shareBtn.textContent = 'Compartir en WhatsApp';
+        shareBtn.disabled = false;
+      }
+
+      // Si el error es porque el usuario canceló, no mostrar alerta
+      if (error.name !== 'AbortError') {
+        alert('Hubo un error al intentar compartir. Por favor, intenta nuevamente.');
+      }
+    }
+  }
+
+  // Función para descargar imagen (fallback)
+  function downloadImage(canvas, fileName) {
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  
+
+  // Inicializar eventos cuando el DOM esté listo
+  function initializeEventListeners() {
+    // Mostrar botón de compartir solo si el dispositivo lo soporta
+    if (navigator.share && navigator.canShare) {
+      const shareBtn = document.getElementById('share-whatsapp-btn');
+      if (shareBtn) {
+        shareBtn.style.display = 'block';
+      }
+    }
+
+    // Botón de compartir en WhatsApp (solo en móviles)
+    const shareBtn = document.getElementById('share-whatsapp-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', shareTicketToWhatsApp);
+    }
+  }
+
+  // Esperar a que el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeEventListeners);
+  } else {
+    initializeEventListeners();
+  }
+
+})();

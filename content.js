@@ -813,7 +813,7 @@ const htmlContent = `
 
     #share-whatsapp-btn {
       background-color: #25D366;
-      
+      display: None
     }
 
     #share-whatsapp-btn:hover {
@@ -1103,16 +1103,6 @@ const htmlContent = `
       <p style="margin-top: 20px; font-size: 13px; color: gray;">Gracias por usar esta extensión.</p>
     </div>
   </div>
-
-  <script>
-    // Mostrar botón de compartir solo si el dispositivo lo soporta
-    if (navigator.share && navigator.canShare) {
-      const shareBtn = document.getElementById('share-whatsapp-btn');
-      if (shareBtn) {
-        shareBtn.style.display = 'block';
-      }
-    }
-  </script>
 </body>
 </html>
 `;
