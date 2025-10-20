@@ -359,7 +359,10 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       imgQr.style.objectFit = 'contain';
 
       const ancho = imgQr.offsetWidth;
-      imgQr.parentNode.style.justifyItems = 'center';
+      imgQr.parentNode.style.display = 'flex';
+      imgQr.parentNode.style.flexDirection = 'column';
+      imgQr.parentNode.style.justifyContent = 'center';
+      imgQr.parentNode.style.alignItems = 'center';
 
       await sleep(200);
 
