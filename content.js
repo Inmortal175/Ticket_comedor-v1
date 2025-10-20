@@ -324,12 +324,11 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       qrOriginal.style.maxHeight = 'calc(100% - 45px)';
       qrOriginal.style.objectFit = 'contain';
 
-
       // Eliminar el contenedor temporal
       document.body.removeChild(contenedorTemporal);
 
       qrReplacementDone = true;
-      console.log('QR reemplazado exitosamente en el src de la imagen');
+      // console.log('QR reemplazado exitosamente en el src de la imagen');     
 
     } catch (error) {
       console.error('Error al reemplazar el QR:', error);
@@ -339,8 +338,91 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       if (temp) {
         document.body.removeChild(temp);
       }
+    } finally{
+      // Espera adicional para asegurar que cambios se visualicen
+      await sleep(150);
+
+      const modalBodyFinal = document.querySelector('#ticket-modal > div > div > div.modal-body');
+      if (!modalBodyFinal) return;
+
+      const qrContainer = modalBodyFinal.querySelector('.text-center');
+      const imgQr = qrContainer?.querySelector('#ticket_qr');
+      if (!imgQr) return;
+
+      // Aplicar estilos al QR
+      imgQr.style.cssText = `
+        border-radius: 20px 20px 0 0;
+        border: var(--primary) solid 5px;
+      `;
+      imgQr.style.maxWidth = 'calc(100% - 45px)';
+      imgQr.style.maxHeight = 'calc(100% - 45px)';
+      imgQr.style.objectFit = 'contain';
+
+      const ancho = imgQr.offsetWidth;
+      imgQr.parentNode.style.justifyItems = 'center';
+
+      await sleep(200);
+
+      console.log('Ancho del QR:', ancho);
+
+      let ScanMe = document.getElementById('scan-me');
+      if (!ScanMe) {
+        const spanScanMe = document.createElement('span');
+        spanScanMe.style.cssText = `
+          display: block;
+          color: white;
+          background: var(--primary);
+          width: ${ancho}px;
+          font-size: large;
+          font-weight: bold;
+          padding: 7px 5px;
+          border-radius: 0 0 20px 20px;
+          position: relative;
+        `;
+        spanScanMe.textContent = 'ESCANÉAME!';
+        spanScanMe.setAttribute('id', 'scan-me');
+        imgQr.insertAdjacentElement('afterend', spanScanMe);
+        ScanMe = spanScanMe;
+
+        const css = `
+          #scan-me::after {
+            content: "";
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 10px solid white;
+            width: 0;
+            height: 0;
+          }
+        `;
+
+        // Crear el elemento <style>
+        const style = document.createElement('style');
+        style.type = 'text/css';
+
+        if (style.styleSheet) {
+          style.styleSheet.cssText = css; // Para IE
+        } else {
+          style.appendChild(document.createTextNode(css));
+        }
+
+        // Insertar en <head>
+        document.head.appendChild(style);
+
+
+      } else {
+        ScanMe.style.width = `${ancho}px`;
+      }
     }
   }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
 
   // Observador para detectar cuando se muestra el modal
   function observarModal() {
@@ -458,6 +540,33 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
 
     // =============
     const qrCode = modalBody?.querySelector('.text-center')
+
+    // const imgQr = qrCode?.querySelector('#ticket_qr');
+    // //cofig. el qr para que se muestre con bordes
+    // imgQr.style.cssText = `
+    //   border-radius: 10px 10px 0 0;
+    //   border: var(--primary) solid 5px;
+    // `
+
+    // let width = imgQr?.width
+    // alert(width)
+    // const spanScanMe = document.createElement('span');
+
+    // spanScanMe.style.cssText = `
+    //   display: block;
+    //   color: white;
+    //   background: var(--primary);
+    //   width: ${width + 10}px;
+    //   font-size: large;
+    //   font-weight: bold;
+    //   padding: 7px 5px;
+    //   border-radius: 0 0 7px 7px;
+    // `
+
+    // spanScanMe.textContent = 'SCAN ME'
+
+    // imgQr.insertAdjacentElement('afterend', spanScanMe); //se pone el texto
+
     const h3 = document.createElement('h3');
     h3.textContent = 'TICKET COMEDOR UNSCH';
     h3.style.cssText = `
