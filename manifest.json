@@ -26,6 +26,7 @@
       "js": [
         "libs/jsqr-1.0.3-min.js",
         "libs/qr-code-styling.min.js",
+        "libs/html2canvas.min.js",
         "content.js"
       ],
       "run_at": "document_idle"

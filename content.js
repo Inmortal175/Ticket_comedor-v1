@@ -214,206 +214,206 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
   let printButtonAdded = false;
 
   // ============================================
-  // let qrReplacementDone = false
-  // // Función para leer el contenido del QR desde la imagen base64
-  // async function leerContenidoQR(imgElement) {
-  //   return new Promise((resolve, reject) => {
-  //     const img = new Image();
-  //     img.crossOrigin = "anonymous";
-  //     img.src = imgElement.src;
+  let qrReplacementDone = false
+  // Función para leer el contenido del QR desde la imagen base64
+  async function leerContenidoQR(imgElement) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imgElement.src;
       
-  //     img.onload = () => {
-  //       const canvas = document.createElement("canvas");
-  //       canvas.width = img.width;
-  //       canvas.height = img.height;
-  //       const ctx = canvas.getContext("2d");
-  //       ctx.drawImage(img, 0, 0);
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
 
-  //       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  //       const code = jsQR(imageData.data, imageData.width, imageData.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-  //       if (code) {
-  //         resolve(code.data);
-  //       } else {
-  //         reject("No se pudo leer el código QR");
-  //       }
-  //     };
+        if (code) {
+          resolve(code.data);
+        } else {
+          reject("No se pudo leer el código QR");
+        }
+      };
       
-  //     img.onerror = () => reject("Error al cargar la imagen del QR");
-  //   });
-  // }
+      img.onerror = () => reject("Error al cargar la imagen del QR");
+    });
+  }
 
-  // // Función principal para reemplazar el QR
-  // async function reemplazarQREnModal(modalBody) {
-  //   if (qrReplacementDone) return;
+  // Función principal para reemplazar el QR
+  async function reemplazarQREnModal(modalBody) {
+    if (qrReplacementDone) return;
 
-  //   const qrOriginal = modalBody.querySelector('#ticket_qr');
-  //   if (!qrOriginal) {
-  //     console.warn('No se encontró el QR original');
-  //     return;
-  //   }
+    const qrOriginal = modalBody.querySelector('#ticket_qr');
+    if (!qrOriginal) {
+      console.warn('No se encontró el QR original');
+      return;
+    }
 
-  //   try {
-  //     // Leer el contenido del QR original
-  //     const dataQR = await leerContenidoQR(qrOriginal);
-  //     console.log('Contenido del QR leído:', dataQR);
+    try {
+      // Leer el contenido del QR original
+      const dataQR = await leerContenidoQR(qrOriginal);
+      console.log('Contenido del QR leído:', dataQR);
 
-  //     // Crear un contenedor temporal oculto para generar el QR
-  //     const contenedorTemporal = document.createElement('div');
-  //     contenedorTemporal.style.cssText = `
-  //       position: absolute;
-  //       left: -9999px;
-  //       width: 600px;
-  //       height: 600px;
-  //     `;
-  //     document.body.appendChild(contenedorTemporal);
+      // Crear un contenedor temporal oculto para generar el QR
+      const contenedorTemporal = document.createElement('div');
+      contenedorTemporal.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        width: 600px;
+        height: 600px;
+      `;
+      document.body.appendChild(contenedorTemporal);
 
-  //     // Generar el QR estilizado en el contenedor temporal
-  //     const logoBase64 = "data:image/png;base64,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";
+      // Generar el QR estilizado en el contenedor temporal
+      const logoBase64 = "data:image/png;base64,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";
       
-  //     const qrCodeStyling = new QRCodeStyling({
-  //       width: 220,
-  //       height: 220,
-  //       data: dataQR,
-  //       margin: 11,
-  //       dotsOptions: {
-  //         color: "#000000ff",
-  //         type: "dots"
-  //       },
-  //       cornersSquareOptions: {
-  //         type: "extra-rounded",
-  //         color: "#000000ff"
-  //       },
-  //       cornersDotOptions: {
-  //         type: "dot",
-  //         color: "#000000ff"
-  //       },
-  //       backgroundOptions: {
-  //         color: "#fff"
-  //       },
-  //       image: logoBase64,
-  //       imageOptions: {
-  //         crossOrigin: "anonymous",
-  //         margin: 10,
-  //         imageSize: 0.7,
-  //         hideBackgroundDots: false
-  //       }
-  //     });
+      const qrCodeStyling = new QRCodeStyling({
+        width: 220,
+        height: 220,
+        data: dataQR,
+        margin: 11,
+        dotsOptions: {
+          color: "#000000ff",
+          type: "dots"
+        },
+        cornersSquareOptions: {
+          type: "extra-rounded",
+          color: "#000000ff"
+        },
+        cornersDotOptions: {
+          type: "dot",
+          color: "#000000ff"
+        },
+        backgroundOptions: {
+          color: "#fff"
+        },
+        image: logoBase64,
+        imageOptions: {
+          crossOrigin: "anonymous",
+          margin: 10,
+          imageSize: 0.7,
+          hideBackgroundDots: false
+        }
+      });
 
-  //     // Agregar el QR al contenedor temporal
-  //     qrCodeStyling.append(contenedorTemporal);
+      // Agregar el QR al contenedor temporal
+      qrCodeStyling.append(contenedorTemporal);
 
-  //     // Esperar a que el QR se renderice completamente
-  //     await new Promise(resolve => setTimeout(resolve, 500));
+      // Esperar a que el QR se renderice completamente
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-  //     // Obtener el canvas generado
-  //     const canvas = contenedorTemporal.querySelector('canvas');
+      // Obtener el canvas generado
+      const canvas = contenedorTemporal.querySelector('canvas');
       
-  //     if (!canvas) {
-  //       throw new Error('No se pudo generar el canvas del QR');
-  //     }
+      if (!canvas) {
+        throw new Error('No se pudo generar el canvas del QR');
+      }
 
-  //     // Convertir el canvas a base64
-  //     const qrBase64 = canvas.toDataURL('image/png', 1.0);
+      // Convertir el canvas a base64
+      const qrBase64 = canvas.toDataURL('image/png', 1.0);
 
-  //     // Reemplazar solo el src de la imagen original
-  //     qrOriginal.src = qrBase64;
+      // Reemplazar solo el src de la imagen original
+      qrOriginal.src = qrBase64;
       
-  //     // Ajustar el tamaño de la imagen para que se vea bien
-  //     qrOriginal.style.maxWidth = 'calc(100% - 45px)';
-  //     qrOriginal.style.maxHeight = 'calc(100% - 45px)';
-  //     qrOriginal.style.objectFit = 'contain';
+      // Ajustar el tamaño de la imagen para que se vea bien
+      qrOriginal.style.maxWidth = 'calc(100% - 45px)';
+      qrOriginal.style.maxHeight = 'calc(100% - 45px)';
+      qrOriginal.style.objectFit = 'contain';
 
 
-  //     // Eliminar el contenedor temporal
-  //     document.body.removeChild(contenedorTemporal);
+      // Eliminar el contenedor temporal
+      document.body.removeChild(contenedorTemporal);
 
-  //     qrReplacementDone = true;
-  //     console.log('QR reemplazado exitosamente en el src de la imagen');
+      qrReplacementDone = true;
+      console.log('QR reemplazado exitosamente en el src de la imagen');
 
-  //   } catch (error) {
-  //     console.error('Error al reemplazar el QR:', error);
+    } catch (error) {
+      console.error('Error al reemplazar el QR:', error);
       
-  //     // Limpiar contenedor temporal si existe
-  //     const temp = document.body.querySelector('[style*="-9999px"]');
-  //     if (temp) {
-  //       document.body.removeChild(temp);
-  //     }
-  //   }
-  // }
+      // Limpiar contenedor temporal si existe
+      const temp = document.body.querySelector('[style*="-9999px"]');
+      if (temp) {
+        document.body.removeChild(temp);
+      }
+    }
+  }
 
-  // // Observador para detectar cuando se muestra el modal
-  // function observarModal() {
-  //   const observer = new MutationObserver((mutations) => {
-  //     for (const mutation of mutations) {
-  //       // Verificar si se agregaron nodos
-  //       if (mutation.addedNodes.length > 0) {
-  //         mutation.addedNodes.forEach(node => {
-  //           if (node.nodeType === Node.ELEMENT_NODE) {
-  //             // Buscar el modal del ticket
-  //             const modal = node.id === 'ticket-modal' ? node : node.querySelector('#ticket-modal');
-  //             if (modal && modal.classList.contains('show')) {
-  //               const modalBody = modal.querySelector('.modal-body');
-  //               if (modalBody) {
-  //                 // Esperar un momento para que la imagen del QR se cargue
-  //                 setTimeout(() => {
-  //                   reemplazarQREnModal(modalBody);
-  //                 }, 300);
-  //               }
-  //             }
-  //           }
-  //         });
-  //       }
+  // Observador para detectar cuando se muestra el modal
+  function observarModal() {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        // Verificar si se agregaron nodos
+        if (mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              // Buscar el modal del ticket
+              const modal = node.id === 'ticket-modal' ? node : node.querySelector('#ticket-modal');
+              if (modal && modal.classList.contains('show')) {
+                const modalBody = modal.querySelector('.modal-body');
+                if (modalBody) {
+                  // Esperar un momento para que la imagen del QR se cargue
+                  setTimeout(() => {
+                    reemplazarQREnModal(modalBody);
+                  }, 300);
+                }
+              }
+            }
+          });
+        }
 
-  //       // Verificar cambios de atributos (cuando el modal se muestra)
-  //       if (mutation.type === 'attributes' && mutation.target.id === 'ticket-modal') {
-  //         const modal = mutation.target;
-  //         if (modal.classList.contains('show') && !qrReplacementDone) {
-  //           const modalBody = modal.querySelector('.modal-body');
-  //           if (modalBody) {
-  //             setTimeout(() => {
-  //               reemplazarQREnModal(modalBody);
-  //             }, 300);
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
+        // Verificar cambios de atributos (cuando el modal se muestra)
+        if (mutation.type === 'attributes' && mutation.target.id === 'ticket-modal') {
+          const modal = mutation.target;
+          if (modal.classList.contains('show') && !qrReplacementDone) {
+            const modalBody = modal.querySelector('.modal-body');
+            if (modalBody) {
+              setTimeout(() => {
+                reemplazarQREnModal(modalBody);
+              }, 300);
+            }
+          }
+        }
+      }
+    });
 
-  //   // Iniciar observación
-  //   observer.observe(document.body, {
-  //     childList: true,
-  //     subtree: true,
-  //     attributes: true,
-  //     attributeFilter: ['class', 'style']
-  //   });
+    // Iniciar observación
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
 
-  //   // También verificar si el modal ya existe en la página
-  //   const modalExistente = document.getElementById('ticket-modal');
-  //   if (modalExistente && modalExistente.classList.contains('show')) {
-  //     const modalBody = modalExistente.querySelector('.modal-body');
-  //     if (modalBody) {
-  //       setTimeout(() => {
-  //         reemplazarQREnModal(modalBody);
-  //       }, 300);
-  //     }
-  //   }
-  // }
+    // También verificar si el modal ya existe en la página
+    const modalExistente = document.getElementById('ticket-modal');
+    if (modalExistente && modalExistente.classList.contains('show')) {
+      const modalBody = modalExistente.querySelector('.modal-body');
+      if (modalBody) {
+        setTimeout(() => {
+          reemplazarQREnModal(modalBody);
+        }, 300);
+      }
+    }
+  }
 
-  // // Reiniciar el flag cuando se cierra el modal
-  // document.addEventListener('click', (e) => {
-  //   const modal = document.getElementById('ticket-modal');
-  //   if (modal && !modal.classList.contains('show')) {
-  //     qrReplacementDone = false;
-  //   }
-  // });
+  // Reiniciar el flag cuando se cierra el modal
+  document.addEventListener('click', (e) => {
+    const modal = document.getElementById('ticket-modal');
+    if (modal && !modal.classList.contains('show')) {
+      qrReplacementDone = false;
+    }
+  });
 
-  // // Inicializar el observador cuando el DOM esté listo
-  // if (document.readyState === 'loading') {
-  //   document.addEventListener('DOMContentLoaded', observarModal);
-  // } else {
-  //   observarModal();
-  // }
+  // Inicializar el observador cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observarModal);
+  } else {
+    observarModal();
+  }
 
 
   //===============================================================================================================
@@ -449,39 +449,221 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
   }
 
 
-  function addPrintButtonToModal(modal) {
+  async function addPrintButtonToModal(modal) {
     if (printButtonAdded || modal.querySelector('.ticket-print-btn')) return;
 
     const modalBody = modal.querySelector('.modal-body');
     const table = modalBody?.querySelector('table');
     if (!modalBody || !table) return;
 
-    const printButton = document.createElement('button');
-    printButton.className = 'ticket-print-btn btn btn-primary';
-    printButton.type = 'button';
-    printButton.setAttribute('aria-label', 'Opciones ticket de comedor');
-    printButton.textContent = 'Opciones Ticket';
 
-    printButton.style.cssText = `
+    // crearemos un boton de compartir
+    const share_btn = document.createElement('button');
+    share_btn.className = 'ticket-print-btn btn btn-primary';
+    share_btn.type = 'button';
+    share_btn.setAttribute('id', 'share-btn');
+    // share_btn.textContent = 'Compartir en WhatsApp'
+
+    share_btn.style.cssText = `
       width: 100%; margin-top: 15px; padding: 10px;
       background-color: #5d0104; color: white;
       font-size: 14px; font-weight: bold;
       border-radius: 5px; cursor: pointer;
       text-align: center; user-select: none;
     `;
+    share_btn.style.display = 'none'
 
-    printButton.addEventListener('mouseenter', () => { printButton.style.backgroundColor = '#8f0206'; });
-    printButton.addEventListener('mouseleave', () => { printButton.style.backgroundColor = '#5d0104'; });
+    // Crear el icono <i> y agregar la clase
+    const icon = document.createElement('i');
+    icon.className = 'la la-whatsapp';
 
-    printButton.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      openPrintOrDownloadWindow();
+    // Agregar icono al botón
+    share_btn.appendChild(icon);
+
+    // Agregar un espacio y luego el texto
+    share_btn.appendChild(document.createTextNode('Compartir por WhatsApp'));
+
+    table.insertAdjacentElement('afterend', share_btn);
+
+    // ============
+    // const printButton = document.createElement('button');
+    // printButton.className = 'ticket-print-btn btn btn-primary';
+    // printButton.type = 'button';
+    // printButton.setAttribute('aria-label', 'Opciones ticket de comedor');
+    // printButton.textContent = 'Opciones Ticket';
+
+    // printButton.style.cssText = `
+    //   width: 100%; margin-top: 15px; padding: 10px;
+    //   background-color: #5d0104; color: white;
+    //   font-size: 14px; font-weight: bold;
+    //   border-radius: 5px; cursor: pointer;
+    //   text-align: center; user-select: none;
+    // `;
+
+    // printButton.addEventListener('mouseenter', () => { printButton.style.backgroundColor = '#8f0206'; });
+    // printButton.addEventListener('mouseleave', () => { printButton.style.backgroundColor = '#5d0104'; });
+
+    // printButton.addEventListener('click', e => {
+    //   e.preventDefault();
+    //   e.stopPropagation();
+    //   openPrintOrDownloadWindow();
+    // });
+
+    // table.insertAdjacentElement('afterend', printButton);
+    printButtonAdded = true;
+
+    //=====
+    const datosUsuario = await new Promise(resolve => {
+      chrome.storage.local.get(['estudiante', 'carreraUns', 'codigo'], result => {
+        resolve(result);
+      });
     });
 
-    table.insertAdjacentElement('afterend', printButton);
-    printButtonAdded = true;
+    const userName = datosUsuario.estudiante || 'USUARIO NO IDENTIFICADO';
+    const userCarrera = datosUsuario.carreraUns || 'CARRERA NO IDENTIFICADA';
+    const userCodigo = datosUsuario.codigo || 'SIN CÓDIGO';
+    
+    const htmlContent = `
+    <table class=" w-100">
+        <tbody>
+        <tr>
+            <td align="center" id="ticket_date"><strong>CARRERA</strong></td>
+        </tr>
+        <tr>
+            <td align="center" id="ticket_date">${userCarrera}</td>
+        </tr>
+        <tr>
+            <td align="center" id="ticket_date"><strong>ESTUDIANTE</strong></td>
+        </tr>
+        <tr>
+            <td align="center" id="ticket_date">${userName}</td>
+        </tr>
+        <tr>
+            <td align="center" id="ticket_date"><strong>CÓDIGO</strong></td>
+        </tr>
+        <tr>
+            <td align="center" id="ticket_date">${userCodigo}</td>
+        </tr>
+    </tbody></table>
+    `
+    const div = document.createElement('div');
+    div.innerHTML = htmlContent
+
+    table.insertAdjacentElement('afterend', div);
+
+    if (navigator.share && navigator.canShare) {
+      const shareBtn = document.getElementById('share-btn');
+      if (shareBtn) {
+        shareBtn.style.display = 'block';
+      }
+    }
+
+    // Botón de compartir en WhatsApp (solo en móviles)
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', shareTicketToWhatsApp);
+    }
   }
+  // ========= inicializar botones para compartir =================
+  // Convertir el ticket a imagen y compartir
+  async function shareTicketToWhatsApp() {
+    try {
+      const modalBody = document.querySelector('#ticket-modal > div > div > div.modal-body');
+      if (!modalBody) {
+        alert('No se encontró el ticket para compartir');
+        return;
+      }
+
+      // Mostrar indicador de carga
+      const shareBtn = document.getElementById('share-btn');
+      const originalText = shareBtn.textContent;
+      shareBtn.textContent = 'Generando...';
+      shareBtn.disabled = true;
+
+      // Convertir el ticket a canvas usando html2canvas
+      const canvas = await html2canvas(modalBody, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        logging: false,
+        useCORS: true
+      });
+
+      // Convertir canvas a blob
+      const blob = await new Promise(resolve => {
+        canvas.toBlob(resolve, 'image/png', 1.0);
+      });
+
+      // Crear un archivo con el blob
+      const fileName = `ticket-comedor-${new Date().getTime()}.png`;
+      const file = new File([blob], fileName, { type: 'image/png' });
+
+      // Verificar si podemos compartir este archivo
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Ticket Comedor UNSCH',
+          text: 'Mi ticket del comedor universitario'
+        });
+        console.log('Imagen compartida exitosamente');
+      } else {
+        // Fallback: descargar la imagen si no se puede compartir
+        downloadImage(canvas, fileName);
+        alert('Tu dispositivo no soporta compartir archivos. La imagen se descargará.');
+      }
+
+      // Restaurar botón
+      shareBtn.textContent = originalText;
+      shareBtn.disabled = false;
+
+    } catch (error) {
+      console.error('Error al compartir:', error);
+      
+      // Restaurar botón en caso de error
+      const shareBtn = document.getElementById('share-btn');
+      if (shareBtn) {
+        shareBtn.textContent = "Compartir en WhatsApp"
+        shareBtn.disabled = false;
+      }
+
+      // Si el error es porque el usuario canceló, no mostrar alerta
+      if (error.name !== 'AbortError') {
+        alert('Hubo un error al intentar compartir. Por favor, intenta nuevamente.');
+      }
+    } finally{
+
+    }
+  }
+  // Función para descargar imagen (fallback)
+  function downloadImage(canvas, fileName) {
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  
+
+  // Inicializar eventos cuando el DOM esté listo
+  function initializeEventListeners() {
+    // Mostrar botón de compartir solo si el dispositivo lo soporta
+    if (navigator.share && navigator.canShare) {
+      const shareBtn = document.getElementById('share-btn');
+      if (shareBtn) {
+        shareBtn.style.display = 'block';
+      }
+    }
+
+    // Botón de compartir en WhatsApp (solo en móviles)
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', shareTicketToWhatsApp);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    alert('init')
+  })
+  // ========= inicializar botones compartir =================
 
   async function openPrintOrDownloadWindow() {
     const modal = document.getElementById('ticket-modal');
@@ -1162,96 +1344,11 @@ const htmlContent = `
     printWindow.document.head.appendChild(scriptjsQR);
   }
 
-  // ======================================================
-  // Convertir el ticket a imagen y compartir
-  async function shareTicketToWhatsApp() {
-    try {
-      const ticketElement = document.getElementById('ticket-wrapper');
-      if (!ticketElement) {
-        alert('No se encontró el ticket para compartir');
-        return;
-      }
-
-      // Mostrar indicador de carga
-      const shareBtn = document.getElementById('share-whatsapp-btn');
-      const originalText = shareBtn.textContent;
-      shareBtn.textContent = 'Generando...';
-      shareBtn.disabled = true;
-
-      // Convertir el ticket a canvas usando html2canvas
-      const canvas = await html2canvas(ticketElement, {
-        scale: 3,
-        backgroundColor: '#ffffff',
-        logging: false,
-        useCORS: true
-      });
-
-      // Convertir canvas a blob
-      const blob = await new Promise(resolve => {
-        canvas.toBlob(resolve, 'image/png', 1.0);
-      });
-
-      // Crear un archivo con el blob
-      const fileName = `ticket-comedor-${new Date().getTime()}.png`;
-      const file = new File([blob], fileName, { type: 'image/png' });
-
-      // Verificar si podemos compartir este archivo
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'Ticket Comedor UNSCH',
-          text: 'Mi ticket del comedor universitario'
-        });
-        console.log('Imagen compartida exitosamente');
-      } else {
-        // Fallback: descargar la imagen si no se puede compartir
-        downloadImage(canvas, fileName);
-        alert('Tu dispositivo no soporta compartir archivos. La imagen se descargará.');
-      }
-
-      // Restaurar botón
-      shareBtn.textContent = originalText;
-      shareBtn.disabled = false;
-
-    } catch (error) {
-      console.error('Error al compartir:', error);
-      
-      // Restaurar botón en caso de error
-      const shareBtn = document.getElementById('share-whatsapp-btn');
-      if (shareBtn) {
-        shareBtn.textContent = 'Compartir en WhatsApp';
-        shareBtn.disabled = false;
-      }
-
-      // Si el error es porque el usuario canceló, no mostrar alerta
-      if (error.name !== 'AbortError') {
-        alert('Hubo un error al intentar compartir. Por favor, intenta nuevamente.');
-      }
-    }
-  }
-
-  // Función para descargar imagen (fallback)
-  function downloadImage(canvas, fileName) {
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  }
-
-  function initializeEventListeners() {
-    // Botón de compartir en WhatsApp (solo en móviles)
-    const shareBtn = document.getElementById('share-whatsapp-btn');
-    if (shareBtn) {
-      shareBtn.addEventListener('click', shareTicketToWhatsApp);
-    }
-  }
-  // ==========================================
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(detectTicketModal, 1000);
+      setTimeout(initializeEventListeners, 1000);
     });
-    document.addEventListener('DOMContentLoaded', initializeEventListeners);
   } else {
     setTimeout(detectTicketModal, 1000);
   }
