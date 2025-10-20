@@ -319,11 +319,6 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       // Reemplazar solo el src de la imagen original
       qrOriginal.src = qrBase64;
       
-      // Ajustar el tamaño de la imagen para que se vea bien
-      qrOriginal.style.maxWidth = 'calc(100% - 45px)';
-      qrOriginal.style.maxHeight = 'calc(100% - 45px)';
-      qrOriginal.style.objectFit = 'contain';
-
       // Eliminar el contenedor temporal
       document.body.removeChild(contenedorTemporal);
 
@@ -354,8 +349,8 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
         border-radius: 20px 20px 0 0;
         border: var(--primary) solid 5px;
       `;
-      imgQr.style.maxWidth = 'calc(100% - 45px)';
-      imgQr.style.maxHeight = 'calc(100% - 45px)';
+      imgQr.style.maxWidth = '195px';
+      imgQr.style.maxHeight = '195px';
       imgQr.style.objectFit = 'contain';
 
       const ancho = imgQr.offsetWidth;
@@ -363,8 +358,6 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       imgQr.parentNode.style.flexDirection = 'column';
       imgQr.parentNode.style.justifyContent = 'center';
       imgQr.parentNode.style.alignItems = 'center';
-
-      console.log('Ancho del QR:', ancho);
 
       let ScanMe = document.getElementById('scan-me');
       if (!ScanMe) {
@@ -572,7 +565,7 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       background: var(--primary);
       color: white;
       text-align: center;
-      padding: 20px 20px;
+      padding: 20px 23px;
       border-radius: 12px 12px 0 0;
       margin-bottom: 20px
     `
@@ -668,7 +661,7 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
     const userCodigo = datosUsuario.codigo || 'SIN CÓDIGO';
     
     const htmlContent = `
-    <table class=" w-100" style="margin-bottom: 3px">
+    <table class="table w-100" style="margin-bottom: 3px">
         <tbody>
         <tr>
             <td ><strong>ESCUELA</strong></td>
@@ -686,7 +679,6 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
     `
     const div = document.createElement('div');
     div.innerHTML = htmlContent
-    div.children[0].setAttribute('id', 'datos')
 
     table.insertAdjacentElement('afterend', div);
 
@@ -715,11 +707,6 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       if (!modalBody) {
         alert('No se encontró el ticket para compartir');
         return;
-      }
-
-      const tabDatos = document.getElementById('datos');
-      if (tabDatos && typeof tabDatos.removeClass === 'function') {
-        tabDatos.removeClass('table');
       }
 
 
@@ -775,10 +762,6 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       //ocultamos los decoradores
       h3.style.display = 'none';
       devText.style.display = 'none';
-
-      if (tabDatos != null || undefined ){
-        tabDatos.classList += ' table'
-      }
 
     } catch (error) {
       console.error('Error al compartir:', error);
