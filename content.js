@@ -481,7 +481,7 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
     share_btn.appendChild(icon);
 
     // Agregar un espacio y luego el texto
-    share_btn.appendChild(document.createTextNode('Compartir por WhatsApp'));
+    share_btn.appendChild(document.createTextNode('Compartir en WhatsApp'));
 
     table.insertAdjacentElement('afterend', share_btn);
 
@@ -579,6 +579,7 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       const originalText = shareBtn.textContent;
       shareBtn.textContent = 'Generando...';
       shareBtn.disabled = true;
+      shareBtn.style.display = 'none';
 
       // Convertir el ticket a canvas usando html2canvas
       const canvas = await html2canvas(modalBody, {
@@ -615,6 +616,8 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       shareBtn.textContent = originalText;
       shareBtn.disabled = false;
 
+      shareBtn.style.display = 'block';
+
     } catch (error) {
       console.error('Error al compartir:', error);
       
@@ -629,8 +632,6 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       if (error.name !== 'AbortError') {
         alert('Hubo un error al intentar compartir. Por favor, intenta nuevamente.');
       }
-    } finally{
-
     }
   }
   // Función para descargar imagen (fallback)
