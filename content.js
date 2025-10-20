@@ -718,9 +718,10 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       }
 
       const tabDatos = document.getElementById('datos');
-      if (tabDatos  != null || undefined){
-        tabDatos.classList += ' table'
+      if (tabDatos && typeof tabDatos.removeClass === 'function') {
+        tabDatos.removeClass('table');
       }
+
 
 
       // Mostrar indicador de carga
