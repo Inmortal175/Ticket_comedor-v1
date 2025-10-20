@@ -340,7 +340,7 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       }
     } finally{
       // Espera adicional para asegurar que cambios se visualicen
-      await sleep(150);
+      // await sleep(150);
 
       const modalBodyFinal = document.querySelector('#ticket-modal > div > div > div.modal-body');
       if (!modalBodyFinal) return;
@@ -363,8 +363,6 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       imgQr.parentNode.style.flexDirection = 'column';
       imgQr.parentNode.style.justifyContent = 'center';
       imgQr.parentNode.style.alignItems = 'center';
-
-      await sleep(200);
 
       console.log('Ancho del QR:', ancho);
 
@@ -411,10 +409,8 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
         } else {
           style.appendChild(document.createTextNode(css));
         }
-
         // Insertar en <head>
         document.head.appendChild(style);
-
 
       } else {
         ScanMe.style.width = `${ancho}px`;
@@ -576,8 +572,9 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       background: var(--primary);
       color: white;
       text-align: center;
-      padding: 20px 5px;
+      padding: 20px 20px;
       border-radius: 12px 12px 0 0;
+      margin-bottom: 20px
     `
     h3.setAttribute('id', 'title-h3')
     qrCode.insertAdjacentElement('beforebegin', h3);
@@ -597,6 +594,7 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       text-align: center;
       padding: 20px 5px;
       border-radius: 0 0 12px 12px;
+      margin-top: 20px;
     `
     devText.setAttribute('id', 'dev-text')
 
