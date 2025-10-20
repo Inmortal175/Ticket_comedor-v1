@@ -686,6 +686,7 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
     `
     const div = document.createElement('div');
     div.innerHTML = htmlContent
+    div.children[0].setAttribute('id', 'datos')
 
     table.insertAdjacentElement('afterend', div);
 
@@ -715,6 +716,12 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
         alert('No se encontró el ticket para compartir');
         return;
       }
+
+      const tabDatos = document.getElementById('datos');
+      if (tabDatos  != null || undefined){
+        tabDatos.classList += ' table'
+      }
+
 
       // Mostrar indicador de carga
       const shareBtn = document.getElementById('share-btn');
@@ -767,6 +774,10 @@ async function procesarQRdesdeImgBase64(qrImageSrc) {
       //ocultamos los decoradores
       h3.style.display = 'none';
       devText.style.display = 'none';
+
+      if (tabDatos != null || undefined ){
+        tabDatos.classList += ' table'
+      }
 
     } catch (error) {
       console.error('Error al compartir:', error);
